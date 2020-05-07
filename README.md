@@ -4,7 +4,7 @@
 
 ###  netfilterqueue
 
-NetfilterQueue provides access to packets matched by an iptables rule in Linux. Packets so matched can be accepted, dropped, altered, or given a mark. The iptables is the tool to access the linux netfilter firewall, the iptable rule we're gonna set to redirect the flow of packets to a queue to be analyzed
+NetfilterQueue provides access to packets matched by an iptables rule in Linux. Packets so matched can be accepted, dropped, altered, or given a mark. The iptables is the tool to access the linux netfilter firewall, the iptable rule we're gonna set to redirect the flow of packets to a queue to be analyzed.
 
 iptables -P FORWARD ACCEPT<br>
 iptables -I INPUT -j NFQUEUE --queue-num 0<br>
@@ -31,13 +31,13 @@ And using regex rules to access the field "Accept-Encoding" i remove the encodin
 
 Therefore the problem when the target make the requests is done, now when the progam check a response from the server (originnaly the response would come with the source port 80 but now came from the port 10000 because of my SslStrip tool) it's gonna inject the code in the field "load" that contains the HTML and scripts from the page that the target requested. Looking for a tag </body> that all HTML pages have and replacing with a java script code. 
 ```python
-elif scapy_packet[scapy.TCP].sport == 10000:
-injection_code = "<script>alert('CODE INJECTOR SUCCSSESFULLY DONE')</script>"
-load = load.replace("</body>", injection_code + "</body>")
+   elif scapy_packet[scapy.TCP].sport == 10000:
+   injection_code = "<script>alert('CODE INJECTOR SUCCSSESFULLY DONE')</script>"
+   load = load.replace("</body>", injection_code + "</body>")
 ```
 Other importants details is change the length of the page because when a page is sent to someone it has a length and how it was changed because of the injecting code we have to change the verify if the load have the field content_length and recalculate the length adding the length of the injected code. 
 ```python
- content_length_search = re.search("(?:Content-Length:\s)(\d*)", load)
+   content_length_search = re.search("(?:Content-Length:\s)(\d*)", load)
             if content_length_search and "text/html" in load:
                 content_length = content_length_search.group(1)
                 new_content_length = int(content_length) + len(injection_code)
@@ -45,22 +45,21 @@ Other importants details is change the length of the page because when a page is
 ```
 Lastly but not least how the format of the packet was change to a scapy packet we have to take the packet and turn into a orginal packet.
 ```python 
-new_packet = set_load(scapy_packet, load)
-packet.set_payload(str(new_packet))
+   new_packet = set_load(scapy_packet, load)
+   packet.set_payload(str(new_packet))
 ```
 This way the progam is runned on the bottom left side are the packets from the Arp_spoof being sent, on the top right side are the code_injector.py showing when requests ad responses are made, the other it's the sslstrip running.
 
 <img src="termInjector.png">
 
-And when i access some website on my target computer :-) ...
+And when my target access some website :-) ...
 
-<img src="">
-
+<img src="codeImage.png">
 
 
 obs: to clean the iptables:
 
-iptables --flush
-iptables --table nat --flush
-iptables --delete-chain
-iptables --table nat --delete-chain
+iptables --flush<br>
+iptables --table nat --flush<br>
+iptables --delete-chain<br>
+iptables --table nat --delete-chain<br>
